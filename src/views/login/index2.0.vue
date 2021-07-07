@@ -40,16 +40,15 @@
 </template>
 
 <script>
-//vue 3.0 试用先引入
-import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
 //验证的邮箱 密码 验证码格式  和过滤
  import {validateSomeMail,validateSomePass,validateSomeCode,filterStr} from '@/utils/validate'
 export default {
    name:"login",
-   setup( props, { refs, root }){
+   data() {
+    //  表单规则
 
-     //表单验证
-      let validateEmail = (rule, value, callback) => {
+     //验证邮箱格式
+      var validateEmail = (rule, value, callback) => {
         
           if (value === '') {
             callback(new Error('请输入邮箱'));
@@ -61,9 +60,9 @@ export default {
       };
 
       //验证密码格式
-      let validatePass = (rule, value, callback) => {
-          ruleForm.pass = filterStr(value);
-          value = ruleForm.pass
+      var validatePass = (rule, value, callback) => {
+          this.ruleForm.pass = filterStr(value);
+          value = this.ruleForm.pass
 
           if (value === '') {
             callback(new Error('请输入密码'));
@@ -76,15 +75,15 @@ export default {
       };
 
       //验证重负密码
-      let validatePass1 = (rule, value, callback) => {
-          ruleForm.pass1 = filterStr(value);
-          value = ruleForm.pass1
-          if(model.value=='login'){
+      var validatePass1 = (rule, value, callback) => {
+          this.ruleForm.pass1 = filterStr(value);
+          value = this.ruleForm.pass1
+          if(this.model=='login'){
              callback();
           }
           if (value === '') {
             callback(new Error('请输入密码'));
-          } else if (value!=ruleForm.pass) {
+          } else if (value!=this.ruleForm.pass) {
             callback(new Error('密码不一致'));
               
           } else {
@@ -92,7 +91,7 @@ export default {
           } 
       };
 
-      let validateCode = (rule, value, callback) => {
+      var validateCode = (rule, value, callback) => {
           if (value === '') {
             callback(new Error('请输入验证码'));
           } else if (validateSomeCode(value)) {
@@ -102,57 +101,55 @@ export default {
           } 
         
       };
-    
 
-    //声明data数据
-
-    const model = ref('login');
-
-
-    const  menuTab = reactive(
-        [
+     return {
+       menuTab:[
         {txt:"登录",current:true , type:"login"},
         {txt:"注册",current:false ,type:"register"}
-       ]
-    );
-    const  ruleForm = reactive(
-         {
+       ],
+       //表单数据开始
+        ruleForm: {
           email: '',
           pass: '',
           pass1: '',
           code: ''
-        }
-    );
-    const  rules = reactive(
-           {
-              email: [
-                { validator: validateEmail, trigger: 'blur' }
-              ],
-              pass: [
-                { validator: validatePass, trigger: 'blur' }
-              ],
-              pass1: [
-                { validator: validatePass1, trigger: 'blur' }
-              ],
-              code: [
-                { validator: validateCode, trigger: 'blur' }
-              ]
         },
-    );
+        rules: {
+          email: [
+            { validator: validateEmail, trigger: 'blur' }
+          ],
+          pass: [
+            { validator: validatePass, trigger: 'blur' }
+          ],
+          pass1: [
+            { validator: validatePass1, trigger: 'blur' }
+          ],
+          code: [
+            { validator: validateCode, trigger: 'blur' }
+          ]
+        },
+      
+       //表单数据结束
 
-    //方法声明
-    const toggleMenu = (data) => {
-      menuTab.forEach(el => {
+        //定义模块,显示与否重复密码
+        model:'login'
+       
+       
+     }
+   },
+   methods:{
+     toggleMenu(data){
+       this.menuTab.forEach(el => {
           el.current=false
        });
        data.current=true;
        //点击赋值显示还是隐藏重复密码
-       model.value=data.type
-     }
+       this.model=data.type
+     },
 
-     //  表单的方法
-        const submitForm = (formName) => {
-        refs[formName].validate((valid) => {
+    //  表单的方法
+         submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!');
           } else {
@@ -160,21 +157,12 @@ export default {
             return false;
           }
         });
-      }
+      },
      
-
-    //  暴露数据
-     return {
-        model,
-        menuTab,
-        ruleForm,
-        rules,
-        toggleMenu,
-        submitForm
-     }
-
+    
+    //  表单的方法
+    
    }
-   
 }
 </script>
 

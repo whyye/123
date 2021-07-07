@@ -9,6 +9,11 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 
+//vue 3.0  试用版
+import VueCompositionApi from '@vue/composition-api'; 
+Vue.use(VueCompositionApi);
+
+
 
 Vue.config.productionTip = false;
 
