@@ -26,12 +26,12 @@
                <label>验证码</label>
                <el-row :gutter="10">
                   <el-col :span="15"> <el-input v-model.number="ruleForm.code"></el-input></el-col>
-                  <el-col :span="9"><el-button type="success"  class="block">获取验证码</el-button></el-col>
+                  <el-col :span="9"><el-button type="success"  class="block" @click="getLoginSms()">获取验证码</el-button></el-col>
                </el-row>
             </el-form-item>
 
             <el-form-item  class="menu-login">
-              <el-button type="danger" @click="submitForm('ruleForm')" class="block">登录</el-button>
+              <el-button type="danger" @click="submitForm('ruleForm')" class="block" :disabled="loginButtonStatus">{{model==="login"?'登录':'注册'}}</el-button>
             </el-form-item>
         </el-form>
 
@@ -40,6 +40,9 @@
 </template>
 
 <script>
+//引入login获取验证码
+import {getSms} from '@/api/login';
+
 //vue 3.0 试用先引入
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
 //验证的邮箱 密码 验证码格式  和过滤
@@ -107,6 +110,8 @@ export default {
     //声明data数据
 
     const model = ref('login');
+    //登录按钮状态默认是禁用
+    const loginButtonStatus  = ref (true);
 
 
     const  menuTab = reactive(
@@ -161,16 +166,26 @@ export default {
           }
         });
       }
+    //获取登录验证码
+    const getLoginSms = ()=>{
+      getSms({
+        "username":ruleForm.email,
+        "module":"login"
+      })
+    }
      
 
     //  暴露数据
      return {
         model,
+        loginButtonStatus,
         menuTab,
         ruleForm,
         rules,
         toggleMenu,
-        submitForm
+        submitForm,
+        getLoginSms
+
      }
 
    }
