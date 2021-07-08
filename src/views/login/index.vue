@@ -167,11 +167,34 @@ export default {
         });
       }
     //获取登录验证码
-    const getLoginSms = ()=>{
-      getSms({
-        "username":ruleForm.email,
-        "module":"login"
+    const getLoginSms = () => {
+    //判断邮箱不能为空才能获取
+      if(ruleForm.email==''){
+
+        root.$message.error('邮箱不能为空');
+        return false
+      }
+    //判断密码格式
+     if(validateSomePass(ruleForm.pass)) {
+
+          root.$message.error('密码格式有误，小姐姐 请注意要大小写+数字');
+          return false;
+      }
+
+    let requestData = {
+          username: ruleForm.email, 
+          module: model.value
+        }
+
+      getSms(requestData).then (res => {
+
+        console.log(res);
+
+      }).catch(error =>{
+         console.log(error);
       })
+
+
     }
      
 

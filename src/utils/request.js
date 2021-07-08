@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { Message } from 'element-ui';
+
 
 
 const BASEURL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API : process.env.VUE_APP_API;
@@ -22,7 +24,20 @@ service.interceptors.request.use(function (config) {
 
 // 添加响应拦截器
 service.interceptors.response.use(function (response) {
+
   // 对响应数据做点什么
+  
+
+  let responseData = response.data;
+
+  if(responseData.resCode!=0){
+    Message.error(responseData.message);
+
+    return Promise.reject(responseData);
+
+  }
+
+
   return response;
 }, function (error) {
   // 对响应错误做点什么
