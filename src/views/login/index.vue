@@ -26,7 +26,7 @@
                <label>验证码</label>
                <el-row :gutter="10">
                   <el-col :span="15"> <el-input v-model.number="ruleForm.code"></el-input></el-col>
-                  <el-col :span="9"><el-button type="success"  class="block" @click="getLoginSms()">获取验证码</el-button></el-col>
+                  <el-col :span="9"><el-button type="success" class="block" @click="getLoginSms()" :disabled="loginCodeStaus.status">{{loginCodeStaus.text}}</el-button></el-col>
                </el-row>
             </el-form-item>
 
@@ -41,7 +41,7 @@
 
 <script>
 //引入login获取验证码
-import {getSms} from '@/api/login';
+import {getSms,register} from '@/api/login';
 
 //vue 3.0 试用先引入
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
@@ -111,7 +111,15 @@ export default {
 
     const model = ref('login');
     //登录按钮状态默认是禁用
-    const loginButtonStatus  = ref (true);
+    let loginButtonStatus  = ref (true);
+    //验证码状态包括文字
+    const loginCodeStaus = reactive({
+        status:false,
+        text:'获取验验证码'
+    });
+
+    //倒计时数据
+    const timer = ref(null);
 
 
     const  menuTab = reactive(
@@ -153,19 +161,13 @@ export default {
        data.current=true;
        //点击赋值显示还是隐藏重复密码
        model.value=data.type
+       //切换是重置表单
+       refs['ruleForm'].resetFields()
+
+       loginCodeStaus.text='获取验证码';
      }
 
-     //  表单的方法
-        const submitForm = (formName) => {
-        refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      }
+     
     //获取登录验证码
     const getLoginSms = () => {
     //判断邮箱不能为空才能获取
@@ -174,26 +176,90 @@ export default {
         root.$message.error('邮箱不能为空');
         return false
       }
-    //判断密码格式
-     if(validateSomePass(ruleForm.pass)) {
+    //判断邮箱格式
+     if(validateSomeMail(ruleForm.email)) {
 
-          root.$message.error('密码格式有误，小姐姐 请注意要大小写+数字');
+          root.$message.error('邮箱格式有误,请重新输入');
           return false;
       }
+      
+      loginCodeStaus.text ='发送中';
+      loginCodeStaus.status =true;
 
-    let requestData = {
+       let requestData = {
           username: ruleForm.email, 
           module: model.value
-        }
+        };
+    
+      setTimeout(() => {
+
+
 
       getSms(requestData).then (res => {
 
-        console.log(res);
+         root.$message.success(res.data.message);
 
-      }).catch(error =>{
-         console.log(error);
-      })
+         //登录或注册按钮启用
+          loginButtonStatus.value=false;
+          
+         //当发送成功后开始倒计时
+          countDown(5);
+         
 
+        }).catch(error =>{
+          console.log(error);
+       })
+        
+      }, 3000);
+
+    
+
+
+    }
+
+    //  表单的方法
+        const submitForm = (formName) => {
+        refs[formName].validate((valid) => {
+          if (valid) {
+            //验证通过注册接口
+            let requestData = {
+              "username":ruleForm.email,
+              "password":ruleForm.pass,
+              "code":ruleForm.code 
+              }
+            register(requestData).then(res=>{
+                
+                root.$message.success(res.data.message);
+
+
+            }).catch(error=>{
+
+            })
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      }
+
+    //倒计时方法 
+    const  countDown = (count) => {
+        
+       let num = count;
+       timer.value = setInterval(()=>{
+          if(num ===0 ){
+                  clearInterval(timer.value);
+                  loginCodeStaus.text='继续获取';
+                  loginCodeStaus.status=false;
+
+            } else {
+
+                  num--;
+                  loginCodeStaus.text=`倒计时${num}秒`
+                  console.log('hhhhh');
+
+              }} ,1000)
 
     }
      
@@ -202,12 +268,15 @@ export default {
      return {
         model,
         loginButtonStatus,
+        loginCodeStaus,
+        timer,
         menuTab,
         ruleForm,
         rules,
         toggleMenu,
         submitForm,
-        getLoginSms
+        getLoginSms,
+        countDown
 
      }
 
@@ -246,14 +315,18 @@ export default {
        .item-from {
       margin-top: 13px;
       color: #fff;
+      
     }
     .menu-login{
+       width: 100%;
       margin-top: 30px;
-      .block {
-        display: block;
-        width: 100%;
-      }
+      
     }
+    .block {
+        width: 100%;
+        display: block;
+        
+      }
     }
    
   }
