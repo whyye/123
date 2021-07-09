@@ -41,7 +41,7 @@
 
 <script>
 //引入login获取验证码
-import {getSms,register} from '@/api/login';
+import {getSms,register,login} from '@/api/login';
 
 //vue 3.0 试用先引入
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
@@ -190,12 +190,8 @@ export default {
           username: ruleForm.email, 
           module: model.value
         };
-    
-      setTimeout(() => {
-
-
-
-      getSms(requestData).then (res => {
+ 
+        getSms(requestData).then (res => {
 
          root.$message.success(res.data.message);
 
@@ -203,38 +199,24 @@ export default {
           loginButtonStatus.value=false;
           
          //当发送成功后开始倒计时
-          countDown(5);
+          countDown(30);
          
 
         }).catch(error =>{
           console.log(error);
        })
-        
-      }, 3000);
-
     
 
 
     }
 
     //  表单的方法
-        const submitForm = (formName) => {
+     const submitForm = (formName) => {
         refs[formName].validate((valid) => {
           if (valid) {
-            //验证通过注册接口
-            let requestData = {
-              "username":ruleForm.email,
-              "password":ruleForm.pass,
-              "code":ruleForm.code 
-              }
-            register(requestData).then(res=>{
-                
-                root.$message.success(res.data.message);
 
-
-            }).catch(error=>{
-
-            })
+            //判断是登录页面还是注册页面 跳不同的接口
+            model.value =="login"? toLogin():toRegister()
 
           } else {
             console.log('error submit!!');
@@ -245,6 +227,10 @@ export default {
 
     //倒计时方法 
     const  countDown = (count) => {
+      //进来先看下有没有存在定时器,有先清除一遍
+      if(timer.value){
+        clearInterval(timer.value);
+      }
         
        let num = count;
        timer.value = setInterval(()=>{
@@ -261,7 +247,60 @@ export default {
 
               }} ,1000)
 
-    }
+    };
+
+    //清除定时器的读秒和状态方法
+    const clearCountDown = ()=>{
+      loginCodeStaus.text='获取验证码';
+      loginCodeStaus.status=false;
+       clearInterval(timer.value);
+
+    };
+
+    //注册的方法
+     const toRegister = ()=>{
+       //验证通过注册接口
+            let requestData = {
+              "username":ruleForm.email,
+              "password":ruleForm.pass,
+              "code":ruleForm.code 
+              }
+
+            register(requestData).then(res=>{
+                
+             root.$message.success(res.data.message);
+
+             //注册成功跳转到登录页
+              toggleMenu(menuTab[0]);
+
+            //清除定时器的读秒和状态
+              clearCountDown();
+
+
+            }).catch(error=>{
+
+            })
+     };
+     //登录的方法 
+     const toLogin  = ()=>{
+        let requestData = {
+              "username":ruleForm.email,
+              "password":ruleForm.pass,
+              "code":ruleForm.code 
+              }
+
+        login(requestData).then(res=>{
+                
+             root.$message.success(res.data.message);
+            //清除定时器的读秒和状态
+              clearCountDown();
+
+
+            }).catch(error=>{
+
+            })
+     }
+
      
 
     //  暴露数据
@@ -276,7 +315,10 @@ export default {
         toggleMenu,
         submitForm,
         getLoginSms,
-        countDown
+        countDown,
+        clearCountDown,
+        toRegister,
+        toLogin
 
      }
 
