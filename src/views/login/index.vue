@@ -40,8 +40,11 @@
 </template>
 
 <script>
+// sha1 加密
+import sha1 from 'js-sha1';
 //引入login获取验证码
 import {getSms,register,login} from '@/api/login';
+
 
 //vue 3.0 试用先引入
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
@@ -262,7 +265,7 @@ export default {
        //验证通过注册接口
             let requestData = {
               "username":ruleForm.email,
-              "password":ruleForm.pass,
+              "password":sha1(ruleForm.pass),
               "code":ruleForm.code 
               }
 
@@ -285,7 +288,7 @@ export default {
      const toLogin  = ()=>{
         let requestData = {
               "username":ruleForm.email,
-              "password":ruleForm.pass,
+              "password":sha1(ruleForm.pass),
               "code":ruleForm.code 
               }
 
