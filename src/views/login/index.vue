@@ -51,7 +51,7 @@ import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vu
 //验证的邮箱 密码 验证码格式  和过滤
  import {validateSomeMail,validateSomePass,validateSomeCode,filterStr} from '@/utils/validate'
 export default {
-   name:"login",
+   name:"Login",
    setup( props, { refs, root }){
 
      //表单验证
@@ -319,6 +319,11 @@ export default {
              root.$message.success(res.data.message);
             //清除定时器的读秒和状态
               clearCountDown();
+
+            //跳转到控制台
+            root.$router.push({
+            name: 'Console'
+          });
 
 
             }).catch(error=>{
