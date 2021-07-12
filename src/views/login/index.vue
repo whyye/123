@@ -167,7 +167,12 @@ export default {
        //切换是重置表单
        refs['ruleForm'].resetFields()
 
-       loginCodeStaus.text='获取验证码';
+       updataCodeStaus({
+         text:"获取验证码",
+         status:false
+       })
+
+       
      }
 
      
@@ -186,6 +191,10 @@ export default {
           return false;
       }
       
+       updataCodeStaus({
+          text:"发送中",
+          status:true
+       });
       loginCodeStaus.text ='发送中';
       loginCodeStaus.status =true;
 
@@ -239,9 +248,11 @@ export default {
        timer.value = setInterval(()=>{
           if(num ===0 ){
                   clearInterval(timer.value);
-                  loginCodeStaus.text='继续获取';
-                  loginCodeStaus.status=false;
-
+                  updataCodeStaus({
+                        text:"继续获取",
+                        status:false
+                     });
+                     
             } else {
 
                   num--;
@@ -254,11 +265,22 @@ export default {
 
     //清除定时器的读秒和状态方法
     const clearCountDown = ()=>{
-      loginCodeStaus.text='获取验证码';
-      loginCodeStaus.status=false;
+      
+       updataCodeStaus({
+          text:"获取验证码",
+          status:false
+       });
        clearInterval(timer.value);
 
     };
+
+    //验证码的状态方法
+    const  updataCodeStaus = (params)=>{
+
+      loginCodeStaus.text=params.text;
+      loginCodeStaus.status=params.status;
+    }
+    
 
     //注册的方法
      const toRegister = ()=>{
@@ -321,7 +343,8 @@ export default {
         countDown,
         clearCountDown,
         toRegister,
-        toLogin
+        toLogin,
+        updataCodeStaus
 
      }
 
