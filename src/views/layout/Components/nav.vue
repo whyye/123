@@ -1,5 +1,6 @@
 <template>
   <div id="nav-wrap">
+     <h1 class="logo"><img src="../../../assets/logo.png" alt=""></h1>
     <!-- 侧边栏 -->
     <el-menu
       default-active="2"
@@ -98,6 +99,7 @@ export default {
 <style <style lang="scss" scoped>
 @import "../../../styles/config.scss";
   #nav-wrap {
+    width: 100%;
     position: fixed;
     top: 0;
     left: 0;
@@ -108,6 +110,13 @@ export default {
     font-size: 20px;
     margin-right: 10px;
   }
+  .logo {
+    text-align: center;
+    img {
+         margin: 28px auto 25px;
+          width: 92px;
+      }
+    }
   }
   
 
