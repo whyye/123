@@ -14,9 +14,9 @@
      >
       <!-- 选换路由的地方 -->
       <template  v-for="(item,index) in routers">
-        <el-submenu :index="item.path"  :key="index" v-if="!item.hidden"  class="hh">
+        <el-submenu :index="index + '' "  :key="index" v-if="!item.hidden"  class="hh">
             <template slot="title">
-              <i class="el-icon-location"></i>
+             <svg-icon :iconClass="item.meta.icon" :className="item.meta.icon" />
               <span>{{item.meta.name}}</span>
             </template>
           <el-menu-item :index="subItem.path" v-for="(subItem, subIndex) in item.children " :key="subIndex">{{subItem.meta.name}}</el-menu-item>
@@ -27,6 +27,7 @@
       
       
     </el-menu>
+  
   </div>
 </template>
 
@@ -103,6 +104,10 @@ export default {
     width: $navMenu;
     height: 100vh;
     background-color: #333366;
+    svg {
+    font-size: 20px;
+    margin-right: 10px;
+  }
   }
   
 

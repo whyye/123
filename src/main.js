@@ -7,11 +7,17 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 
+//全局组件
+import "./icons/index";
+
+
 Vue.use(ElementUI);
 
 //vue 3.0  试用版
 import VueCompositionApi from '@vue/composition-api'; 
 Vue.use(VueCompositionApi);
+
+
 
 
 

@@ -28,7 +28,8 @@ const routes = [
     name: "Console",
     redirect:"index",
     meta: {
-      name: "控制台"
+      name: "控制台",
+      icon: 'console'
     },
     
     component: () => import("../views/layout/index.vue"),
@@ -52,7 +53,8 @@ const routes = [
     name: "Info",
     
     meta: {
-      name: "信息管理"
+      name: "信息管理",
+      icon: 'minus'
     },
     
     component: () => import("../views/layout/index.vue"),
@@ -86,7 +88,8 @@ const routes = [
     name: "User",
     
     meta: {
-      name: "用户管理"
+      name: "用户管理",
+      icon: 'user'
     },
     
     component: () => import("../views/layout/index.vue"),
