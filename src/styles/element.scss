@@ -1,0 +1,24 @@
+// .el-menu-item.is-active {
+//   background-color: sandybrown !important;
+// };
+
+
+  // .el-submenu__title:hover {
+  //   background-color: rgb(28, 171, 228) !important;
+  // }
+//   .el-submenu__title:focus {
+//     background-color: rgb(28, 171, 228) !important;
+//   }
+
+
+  .el-submenu .el-menu-item {
+    font-size: 14px;
+    padding-left: 50px !important;
+    &.is-active { background-color: rgba(245, 108, 108, 0.2) !important; }
+}
+
+
+// 修改一级菜单样式
+li.el-submenu {
+  &.is-active.is-opened .el-submenu__title { background-color: $mainCcolor !important; }
+}
