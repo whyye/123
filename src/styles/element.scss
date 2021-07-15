@@ -22,3 +22,9 @@
 li.el-submenu {
   &.is-active.is-opened .el-submenu__title { background-color: $mainCcolor !important; }
 }
+
+//修改nav 右边的边框显示
+
+.el-menu {
+  border-right: none !important;
+}

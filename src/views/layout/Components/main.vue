@@ -25,9 +25,18 @@ export default {
       border:30px solid #f7f7f7;
       background-color:#fff;
       border-bottom: none;
-     
-      
-    
-    
+        @include webkit(transition,all .5s ease 0s );
   }
+   .open {
+    #main-wrap{
+      left: $navMenu;
+    }
+  }
+  .close {
+    #main-wrap{
+      left: $navMenMin;
+      
+    }
+  }
+
 </style>>
