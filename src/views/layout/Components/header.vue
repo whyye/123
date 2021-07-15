@@ -24,7 +24,7 @@ export default {
     const navMenuStatus = ()=>{
       console.log(1111);
       root.$store.commit('SET_COLLAPSE');
-        console.log(root.$store.state.isCollapse)
+        console.log(root.$store.state.app.isCollapse)
 
     }
   
