@@ -6,7 +6,7 @@
     <div class="pull-right ">
       <div class="header-info pull-left">
         <img src="../../../assets/admin.png" alt="">
-        <span>管理员</span>
+        <span>{{adminUser}}</span>
       </div>
       <div class="pull-left header-icon">
         <svg-icon iconClass="exit" className="exit" />
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
+import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted,computed } from '@vue/composition-api';
 
 export default {
   name:'Header',
@@ -24,13 +24,19 @@ export default {
     const navMenuStatus = ()=>{
       console.log(1111);
       root.$store.commit('login/SET_COLLAPSE');
-        console.log(root.$store.state.app.isCollapse)
+        console.log(root.$store.state.login.isCollapse)
 
     }
+
+          /**
+       * computed 监听
+       */
+   const adminUser = computed(() => root.$store.state.login.username);
   
 
     return {
-      navMenuStatus
+      navMenuStatus,
+      adminUser
     }
 
 

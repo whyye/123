@@ -133,8 +133,8 @@ export default {
     );
     const  ruleForm = reactive(
          {
-          email: '',
-          pass: '',
+          email: '211eee@126.com',
+          pass: 'OIYYkis552',
           pass1: '',
           code: ''
         }
@@ -211,7 +211,7 @@ export default {
           loginButtonStatus.value=false;
           
          //当发送成功后开始倒计时
-          countDown(30);
+          countDown(10);
          
 
         }).catch(error =>{
@@ -314,21 +314,31 @@ export default {
               "code":ruleForm.code 
               }
 
-        login(requestData).then(res=>{
+        // login(requestData).then(res=>{
                 
-             root.$message.success(res.data.message);
-            //清除定时器的读秒和状态
-              clearCountDown();
+        //      root.$message.success(res.data.message);
+        //     //清除定时器的读秒和状态
+        //       clearCountDown();
 
-            //跳转到控制台
-            root.$router.push({
-            name: 'Console'
-          });
+        //     //跳转到控制台
+        //     root.$router.push({
+        //     name: 'Console'
+        //   });
 
 
-            }).catch(error=>{
+        //     }).catch(error=>{
 
-            })
+        //     })
+        
+        // 调用store的dispah方法
+            root.$store.dispatch('login/login', requestData).then(res => {
+               root.$message.success(res.data.message);
+                // 页面跳转
+                root.$router.push({
+                  name: 'Console'
+                })
+        }).catch(error => {});
+          
      }
 
      

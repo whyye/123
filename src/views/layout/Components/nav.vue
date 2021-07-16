@@ -42,7 +42,7 @@ export default {
       /**
        * computed 监听
        */
-   const isCollapse = computed(() => root.$store.state.app.isCollapse);
+   const isCollapse = computed(() => root.$store.state.login.isCollapse);
 
     //声明data数据
  const routers = reactive(root.$router.options.routes);
