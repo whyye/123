@@ -17,6 +17,9 @@ Vue.use(ElementUI);
 import VueCompositionApi from '@vue/composition-api'; 
 Vue.use(VueCompositionApi);
 
+//引入路由守卫
+import './router/protect/index';
+
 
 
 
