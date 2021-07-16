@@ -2,13 +2,15 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Cookies from "js-cookie";
 
-import app from './app.js';
+import app from './modules/app';
+import login from './modules/login';
 
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules:{
-    app
+    app,
+    login
   }
 });
