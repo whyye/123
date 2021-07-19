@@ -22,6 +22,7 @@ export default {
        * computed 监听
        */
    const isCollapse = computed(() => root.$store.state.login.isCollapse);
+   console.log(root.$store.state.login);
 
    return {
      isCollapse

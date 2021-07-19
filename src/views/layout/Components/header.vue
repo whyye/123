@@ -8,7 +8,7 @@
         <img src="../../../assets/admin.png" alt="">
         <span>{{adminUser}}</span>
       </div>
-      <div class="pull-left header-icon">
+      <div class="pull-left header-icon" @click="exitLogin">
         <svg-icon iconClass="exit" className="exit" />
       </div>
     </div>
@@ -18,25 +18,55 @@
 <script>
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted,computed } from '@vue/composition-api';
 
+import {removeToken} from "@/utils/getToken.js";
+import {removeUser} from "@/utils/getUser.js";
+
+
 export default {
   name:'Header',
   setup(props, {root}){
     const navMenuStatus = ()=>{
-      console.log(1111);
+      
       root.$store.commit('login/SET_COLLAPSE');
         console.log(root.$store.state.login.isCollapse)
 
+    }
+    //退出
+    const exitLogin = ()=>{
+
+      // 问题 一定要用store来调用吗? 然后promise出来,异步请求,  视频是异步请求的
+      
+      console.log('22222');
+     root.$confirm('确定要退出登录吗', '退出?', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           root.$store.commit('login/SET_TOKEN', '');
+           root.$store.commit('login/SET_USERNAME', '');
+           removeToken();
+           removeUser();
+          // 页面跳转
+        root.$router.push({
+          name: 'Login'
+        })
+
+
+        })
+      
     }
 
           /**
        * computed 监听
        */
    const adminUser = computed(() => root.$store.state.login.username);
+
   
 
     return {
       navMenuStatus,
-      adminUser
+      adminUser,
+      exitLogin
     }
 
 

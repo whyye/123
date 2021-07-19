@@ -308,11 +308,18 @@ export default {
      };
      //登录的方法 
      const toLogin  = ()=>{
+
+        //清除定时器的读秒和状态
+              clearCountDown();
+
+
+
         let requestData = {
               "username":ruleForm.email,
               "password":sha1(ruleForm.pass),
               "code":ruleForm.code 
               }
+        
 
         // login(requestData).then(res=>{
                 
