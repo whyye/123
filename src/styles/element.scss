@@ -29,3 +29,11 @@ li.el-submenu {
   border-right: none !important;
 }
 
+
+div.cell {
+  &.bold {
+  font-weight: bolder;
+  color: #333;
+}
+}
+
