@@ -37,3 +37,26 @@ div.cell {
 }
 }
 
+.info {
+  .el-dialog__body {
+    padding: 30px 40px;
+  }
+  
+  .el-form-item:last-child {
+    margin-bottom: 0px;
+    
+  }
+  
+  .el-textarea__inner {
+    height: 150px;
+  }
+  
+  .el-dialog__footer{
+    text-align: center !important;
+  }
+  .el-button {
+    width: 150px;
+    margin: 25px 11px 35px;
+  }
+}
+

@@ -42,7 +42,7 @@ const routes = [
           name: "首页"
         },
         
-        component: () => import("../views/console/index.vue"),
+        component: () => import("../views/info/detailed.vue"),
        }
       
     ]
@@ -62,6 +62,7 @@ const routes = [
        {
         path: "/detailed",
         name: "Detailed",
+        
         meta: {
          
           name: "信息列表"

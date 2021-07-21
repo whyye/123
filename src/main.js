@@ -10,8 +10,14 @@ import 'element-ui/lib/theme-chalk/index.css';
 //全局组件
 import "./icons/index";
 
+// 全局方法 
+import global from '@/utils/global.js';
+
+
+
 
 Vue.use(ElementUI);
+Vue.use(global);
 
 //vue 3.0  试用版
 import VueCompositionApi from '@vue/composition-api'; 
