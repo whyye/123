@@ -75,7 +75,8 @@ const routes = [
         name: "Category",
         meta: {
          
-          name: "信息分类"
+          name: "信息分类",
+          icon: 'minus'
         },
         
         component: () => import("../views/info/category.vue"),
