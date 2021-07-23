@@ -2,6 +2,9 @@ import axios from "axios";
 
 import { Message } from 'element-ui';
 
+import {getToken} from '@/utils/getToken';
+import {getUser} from '@/utils/getUser';
+
 
 
 const BASEURL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API : process.env.VUE_APP_API;
@@ -16,6 +19,8 @@ const service = axios.create({
 // 添加请求拦截器
 service.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
+  config.headers['Tokey'] = getToken ();
+  config.headers['UserName'] = getUser();
   return config;
 }, function (error) {
   // 对请求错误做些什么

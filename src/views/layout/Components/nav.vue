@@ -72,7 +72,7 @@ export default {
     top: 0;
     left: 0;
     width: $navMenu;
-    height: 100vh;
+    height: 100%;
     background-color: #333366;
     @include webkit(transition,all .5s ease 0s );
      

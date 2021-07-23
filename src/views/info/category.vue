@@ -1,6 +1,6 @@
 <template>
   <div  class="category">
-      <el-button type="danger" class="btn" >添加一级分类</el-button>
+      <el-button type="danger" class="btn" @click="firstCategory" >添加一级分类</el-button>
       <div class="hr-line"> </div>
       <div class="category-menu">
           <el-row :gutter="50">
@@ -8,65 +8,32 @@
                 <el-col :span="10">
                   <div class="menu-up">
 
+                    
+                  <div class="menu-wrap" v-for="(item,index) in infoList.list" :key="index">
+                   
+                    <h4>
+                       <svg-icon iconClass="minus"  class="icon-minus"/>
+                        {{item.category_name}}
+                      <div class="btn-group">
+                        <el-button type="danger" round size="mini">编辑</el-button>
+                        <el-button type="success" round size="mini">添加子级</el-button>
+                        <el-button type="primary" round size="mini">删除</el-button>
+                      </div>
+                      
+                    </h4>
+                    
+                    <ul v-if="item.children" >
+                      <li v-for="(subItem,subIndex) in item.children ">
+                        {{subItem.category_name}}
+                        <div class="btn-group">
+                          <el-button type="danger" round size="mini">编辑</el-button>
+                          <el-button type="primary" round size="mini">删除</el-button>
+                        </div>
+                      </li>
+                      
+                     </ul>
+                  </div>
                   
-                  <div class="menu-wrap">
-                   
-                    <h4>
-                       <svg-icon iconClass="minus" :className="minus" class="icon-minus"/>
-                        新闻
-                      <div class="btn-group">
-                        <el-button type="danger" round size="mini">编辑</el-button>
-                        <el-button type="success" round size="mini">添加子级</el-button>
-                        <el-button type="primary" round size="mini">删除</el-button>
-                      </div>
-                      
-                    </h4>
-                    
-                    <ul>
-                      <li>
-                        国内
-                        <div class="btn-group">
-                          <el-button type="danger" round size="mini">编辑</el-button>
-                          <el-button type="primary" round size="mini">删除</el-button>
-                        </div>
-                      </li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                     </ul>
-                  </div>
-                  <div class="menu-wrap">
-                   
-                    <h4>
-                       <svg-icon :iconClass="minus" :className="minus" class="icon-minus"/>
-                        新闻
-                      <div class="btn-group">
-                        <el-button type="danger" round size="mini">编辑</el-button>
-                        <el-button type="success" round size="mini">添加子级</el-button>
-                        <el-button type="primary" round size="mini">删除</el-button>
-                      </div>
-                      
-                    </h4>
-                    
-                    <ul>
-                      <li>
-                        国内
-                        <div class="btn-group">
-                          <el-button type="danger" round size="mini">编辑</el-button>
-                          <el-button type="primary" round size="mini">删除</el-button>
-                        </div>
-                      </li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                      <li>国内</li>
-                     </ul>
-                  </div>
                   
                   </div>
                   
@@ -77,16 +44,16 @@
                         一级分类编辑
                       </div>
                       <div class="editContent">
-                        <el-form :model="ruleForm" status-icon   label-width="130px" class="demo-ruleForm">
-                          <el-form-item label="一级分类名称：" prop="categoryOne" class="categoryName">
-                            <el-input type="password" v-model="ruleForm.categoryOne" ></el-input>
+                        <el-form :model="ruleForm" status-icon  ref="ruleForm"  label-width="130px" class="demo-ruleForm">
+                          <el-form-item label="一级分类名称：" prop="categoryOne" class="categoryName" v-if="categoryOneStatus">
+                            <el-input type="text" v-model="ruleForm.categoryOne" ></el-input>
                           </el-form-item>
-                          <el-form-item label="二级分类名称：" prop="categoryTwo" class="categoryName">
-                            <el-input type="password" v-model="ruleForm.categoryTwo" ></el-input>
+                          <el-form-item label="二级分类名称：" prop="categoryTwo" class="categoryName" v-if="categoryTwoStatus">
+                            <el-input type="text" v-model="ruleForm.categoryTwo" ></el-input>
                           </el-form-item>
                           
                           <el-form-item>
-                            <el-button type="danger" >提交</el-button>
+                            <el-button type="danger"  @click="addFirst('ruleForm')">提交</el-button>
                          
                           </el-form-item>
                       </el-form>
@@ -102,7 +69,9 @@
 </template>
 
 <script>
-import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vue/composition-api';
+import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted,refs } from '@vue/composition-api'
+
+import {getCategoryList,addFirstCategory} from '@/api/info';
 
 export default {
   name:'Category',
@@ -123,6 +92,15 @@ export default {
           categoryTwo: '',
           age: ''
         })
+
+    //信息分类列表数据
+
+    const infoList = reactive ({
+      list:[]
+    })
+
+    const categoryOneStatus =ref (true);
+    const categoryTwoStatus =ref (true);
     
  
 
@@ -133,7 +111,58 @@ export default {
 
     //方法声明
  
-   
+    // 获取信息分类列表的方法
+     const getCategory = ()=>{
+
+        getCategoryList({}).then(res=>{
+         
+          if (res.data.resCode==0){
+                 let req =res.data.data.data
+                  console.log(res.data.data.data);
+                  infoList.list =req
+          }
+
+        }).catch(err=>{
+          console.log('获取信息列表有误');
+        })
+
+     }
+
+
+    //  按钮触发一级分类,二级分类不显示
+    const firstCategory = ()=>{
+         categoryOneStatus.value=true;
+        categoryTwoStatus.value=false;
+    }
+    // 添加一级分类方法
+     const  addFirst = (formName)=>{
+
+          if(ruleForm.categoryOne==''){
+             root.$message.error('请输入一级分类内容');
+
+            return false
+          }
+
+       let data = { "categoryName":ruleForm.categoryOne }
+
+        addFirstCategory(data).then(res=>{
+         
+           if (res.data.resCode==0){
+                 root.$message.success(res.data.message);
+                 let data = res.data.data.category_name
+                 infoList.list.push(data)
+               refs[formName].resetFields();
+                // getCategory();
+          }
+         
+
+        }).catch(err=>{
+          console.log('添加一级分类有误');
+        })
+
+     }
+
+
     
 
    
@@ -152,11 +181,20 @@ export default {
     
   
 
-     
+    //  生命周期
+    onMounted(()=>{
+        getCategory()
+    })
 
     //  暴露数据
      return {
       ruleForm,
+      infoList,
+      categoryOneStatus,
+      categoryTwoStatus,
+      getCategory,
+      addFirst,
+      firstCategory
      
 
      }

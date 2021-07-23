@@ -17,7 +17,8 @@ export default {
 <style <style lang="scss" scoped>
 @import "../../../styles/config.scss";
     #main-wrap {
-      position: fixed;
+      height: 100%;
+      position: absolute;
       top: 75px;
       left: $navMenu;
       bottom: 0;
@@ -26,6 +27,7 @@ export default {
       background-color:#fff;
       border-bottom: none;
         @include webkit(transition,all .5s ease 0s );
+
   }
    .open {
     #main-wrap{

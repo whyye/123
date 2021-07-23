@@ -33,5 +33,8 @@ export default {
 </script>
 
 <style <style lang="scss" scoped>
+#layout-wrap{
+  background-color: #fff;
+}
   
 </style>>
