@@ -23,19 +23,19 @@ router.beforeEach((to,from,next)=>{
         removeUser();
         store.commit('login/SET_TOKEN','');
         store.commit('login/SET_USERNAME','');
-        console.log(store.state.login);
+        // console.log(store.state.login);
       }
       next();
-      console.log('存在');
+      // console.log('存在');
 
    }else{
       //没有token 又干什么
       if(WhiteList.indexOf(to.path)!=-1){
-        console.log('经过了一次白名单验证');
+        // console.log('经过了一次白名单验证');
         next();
 
       }else{
-        console.log('不存在');
+        // console.log('不存在');
         next('/login');
       }
    }
