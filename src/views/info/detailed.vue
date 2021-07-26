@@ -10,10 +10,10 @@
                 <div class="group-content">
                      <el-select v-model="type_value" placeholder="请选择" style="width: 100%;">
                           <el-option
-                            v-for="item in type_options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
+                            v-for="item in type_options.list"
+                            :key="item.id"
+                            :label="item.category_name"
+                            :value="item.id">
                           </el-option>
                      </el-select>
                 </div>
@@ -122,6 +122,9 @@ import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vu
 // 全局global3.0 写法  
 import { global } from "@/utils/global_V3.0";
 
+import { getCategoryGlobal } from "@/utils/common.js";
+
+
 import InfoAdd from './dialog/infoAdd.vue';
 export default {
  name:"Detail",
@@ -131,6 +134,8 @@ export default {
 
       // global
         const { confirm } = global();
+       //  全局获取分类类别的方法 
+     const { categoryGlobal, categoryGlobalData } = getCategoryGlobal();
 
     
 
@@ -149,22 +154,7 @@ export default {
 
   // 选项数据
     const  type_options = reactive(
-      [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }]
+     {list:''}
           
     );
 
@@ -275,6 +265,25 @@ export default {
        
       };
 
+
+         watch(()=>categoryGlobalData.reqData,(value)=>{
+           console.log(1111);
+           console.log(value);
+             type_options.list =value
+         })
+  
+
+    //  生命周期
+    onMounted(()=>{
+        // getCategory()
+        // 全局获取分类列表的方法
+        categoryGlobal();
+        console.log(categoryGlobalData);
+       
+        
+
+    })
+
    
 
    
@@ -326,7 +335,7 @@ export default {
         @include layout(85,right);
     }
     &.keyword {
-        @include layout(70,right);
+        @include layout(60,right);
     }
   }
   .console-menu , .console-page {

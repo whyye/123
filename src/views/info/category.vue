@@ -73,11 +73,17 @@ import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted,refs } from
 
 import {getCategoryList,addFirstCategory,deleteFirstCategory,editFirstCategory} from '@/api/info';
 
+import { getCategoryGlobal } from "@/utils/common.js";
+
+
 
 
 export default {
   name:'Category',
    setup( props, { refs, root }){
+
+    //  全局获取分类类别的方法 
+     const { categoryGlobal, categoryGlobalData } = getCategoryGlobal();
 
     //  console.log(root.$router.options.routes)
 
@@ -107,21 +113,21 @@ export default {
     //方法声明
  
     // 获取信息分类列表的方法
-     const getCategory = ()=>{
+    //  const getCategory = ()=>{
 
-        getCategoryList({}).then(res=>{
+    //     getCategoryList({}).then(res=>{
          
-          if (res.data.resCode==0){
-                 let req =res.data.data.data
+    //       if (res.data.resCode==0){
+    //              let req =res.data.data.data
                  
-                  infoList.list =req
-          }
+    //               infoList.list =req
+    //       }
 
-        }).catch(err=>{
-          console.log('获取信息列表有误');
-        })
+    //     }).catch(err=>{
+    //       console.log('获取信息列表有误');
+    //     })
 
-     }
+    //  }
 
 
     //  按钮触发一级分类,二级分类不显示
@@ -207,9 +213,13 @@ export default {
          root.$message.success(res.data.message);
          refs[ infoList.formName].resetFields();
         //  过滤  利用 对象的 引用类型的特性, 修改原来数组的值
-         let replaceData = infoList.list.filter(item=>item.id==infoList.editCurrent.id)
-         console.log(replaceData);
-        replaceData[0].category_name=res.data.data.data.categoryName;
+        //  let replaceData = infoList.list.filter(item=>item.id==infoList.editCurrent.id)
+        //  console.log(replaceData);
+        // replaceData[0].category_name=res.data.data.data.categoryName;
+
+        // 方法2 利用 对象的 引用类型的特性
+        infoList.editCurrent.category_name=res.data.data.data.categoryName;
+
 
         // 编辑成功刷新替换
         // getCategory();
@@ -261,12 +271,19 @@ export default {
     //      console.log(key, keyPath);
     // };
 
-    
+    watch(()=>categoryGlobalData.reqData,(value)=>{
+        infoList.list =value
+    })
   
 
     //  生命周期
     onMounted(()=>{
-        getCategory()
+        // getCategory()
+        // 全局获取分类列表的方法
+        categoryGlobal();
+       
+        
+
     })
 
     //  暴露数据
@@ -278,7 +295,7 @@ export default {
       ruleForm, infoList,
 
       // 方法 
-        getCategory, addFirst, firstCategory, del_first_category,deleteFirstSure, edit_first_show, edit_fist_submit
+        addFirst, firstCategory, del_first_category,deleteFirstSure, edit_first_show, edit_fist_submit
 
      }
 
