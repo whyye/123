@@ -1,5 +1,5 @@
 import { MessageBox } from 'element-ui';
-import {getCategoryList,addFirstCategory,deleteFirstCategory,editFirstCategory} from '@/api/info';
+import {getCategoryList,addFirstCategory,deleteFirstCategory,editFirstCategory,getCategoryListAll} from '@/api/info';
 
 import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted,refs } from '@vue/composition-api'
 
@@ -9,10 +9,11 @@ export function getCategoryGlobal(){
     
     const categoryGlobal = (params) => {
 
-      getCategoryList({}).then(res=>{
+      getCategoryListAll({}).then(res=>{
+        
          
         if (res.data.resCode==0){
-               let req =res.data.data.data
+               let req =res.data.data
                
                categoryGlobalData.reqData=req
         }
@@ -26,6 +27,7 @@ export function getCategoryGlobal(){
     return {
         
       categoryGlobal,
-      categoryGlobalData
+      categoryGlobalData,
+      
     }
 }

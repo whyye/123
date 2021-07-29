@@ -17,15 +17,14 @@ export default {
 <style <style lang="scss" scoped>
 @import "../../../styles/config.scss";
     #main-wrap {
-      height: 100%;
       position: absolute;
       top: 75px;
       left: $navMenu;
-      bottom: 0;
+      
       right: 0;
       border:30px solid #f7f7f7;
       background-color:#fff;
-      border-bottom: none;
+      // border-bottom: none;
         @include webkit(transition,all .5s ease 0s );
 
   }

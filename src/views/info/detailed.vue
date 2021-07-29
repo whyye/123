@@ -111,7 +111,7 @@
      <!-- 信息添加弹框 组件 -->
    
       <!-- <InfoAdd :flag.sync="infoAddStatus"  /> -->
-      <InfoAdd :flag="infoAddStatus" @ok="close" />
+      <InfoAdd :flag="infoAddStatus" @ok="close" :typeData="type_options.list" />
   </div>
 </template>
 
@@ -154,7 +154,7 @@ export default {
 
   // 选项数据
     const  type_options = reactive(
-     {list:''}
+     {list:[]}
           
     );
 
@@ -267,8 +267,7 @@ export default {
 
 
          watch(()=>categoryGlobalData.reqData,(value)=>{
-           console.log(1111);
-           console.log(value);
+           
              type_options.list =value
          })
   
@@ -278,7 +277,7 @@ export default {
         // getCategory()
         // 全局获取分类列表的方法
         categoryGlobal();
-        console.log(categoryGlobalData);
+      
        
         
 
