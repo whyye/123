@@ -348,17 +348,7 @@ export default {
     })
 
 
-    // 滚动的方法
-    const handleScroll = ()=> {
-      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      var offsetTop = document.querySelector('#searchBar').offsetTop
-      if (scrollTop > offsetTop) {
-        this.searchBarFixed = true
-      } else {
-        this.searchBarFixed = false
-      }
-      // console.log(scrollTop,offsetTop)
-    }
+  
   
 
     //  生命周期
