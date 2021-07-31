@@ -70,12 +70,12 @@
      </div>
      <div class="console-menu">
 
-            <el-table :data="tableData.item"  style="width: 100%" border   v-loading="loading">
+            <el-table :data="tableData"  style="width: 100%" border >
 
                 <el-table-column type="selection" width="40" align="center" > </el-table-column>
                 <el-table-column prop="title" label="标题" width="600" align="center" label-class-name='bold'> </el-table-column>
-                <el-table-column prop="categoryId" label="类别" width="80"   align="center" label-class-name='bold'> </el-table-column>
-                <el-table-column prop="createDate" label="日期" width="180"  align="center" label-class-name='bold'> </el-table-column>
+                <el-table-column prop="type" label="类别" width="80"   align="center" label-class-name='bold'> </el-table-column>
+                <el-table-column prop="data" label="日期" width="180"  align="center" label-class-name='bold'> </el-table-column>
                 <el-table-column prop="administrator" label="管理人"   align="center" label-class-name='bold' width="80"> </el-table-column>
                 
 
@@ -101,9 +101,9 @@
                     @current-change="handleCurrentChange"
                     :current-page="currentPage4"
                     :page-sizes="[10, 20, 50, 100]"
-                    :page-size="page.pageSize"
+                    :page-size="20"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="70">
                  </el-pagination>
           </el-col>
         </el-row>
@@ -111,7 +111,7 @@
      <!-- 信息添加弹框 组件 -->
    
       <!-- <InfoAdd :flag.sync="infoAddStatus"  /> -->
-      <InfoAdd :flag="infoAddStatus" @ok="close" :typeData="type_options.list" @updateList="UpdataList" />
+      <InfoAdd :flag="infoAddStatus" @ok="close" :typeData="type_options.list" />
   </div>
 </template>
 
@@ -123,8 +123,6 @@ import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vu
 import { global } from "@/utils/global_V3.0";
 
 import { getCategoryGlobal } from "@/utils/common.js";
-
-import {addInfoList} from '@/api/info.js'
 
 
 import InfoAdd from './dialog/infoAdd.vue';
@@ -146,22 +144,12 @@ export default {
     const headerData = ref('');
     const keyword_value = ref(1);
     const search_keyWork = ref('');
-    let loading =ref(false);
-    
-
-    let total =ref(0);
-    const page =reactive({
-      pageNumber:1,
-      pageSize:10
-
-    })
-    
 
     // 信息新增弹框状态
     let infoAddStatus = ref(false);
 
     // 分页数据
-    const currentPage4 = ref(1);
+    const currentPage4 = ref(4);
     
 
   // 选项数据
@@ -172,10 +160,38 @@ export default {
 
     //表格数据
     const  tableData = reactive(
-      //item 写 "" 会报错,,要写 []
-      {item:[]}
+       [{
+            title: '纽约市长白思豪宣布退出总统竞选 特朗普发推回应',
+            type: '国内信息',
+            data: '2019-09-10 19:31:31',
+            administrator:'管理员',
+           
 
-      
+          },
+          {
+            title: '习近平在中央政协工作会议暨庆祝中国人民政治协商会议成立70周年大会上发表重要讲话',
+            type: '国内信息',
+            data: '2019-09-10 19:31:31',
+            administrator:'李四',
+            
+
+          },{
+            title: '基里巴斯与台当局"断交" 系蔡当局上台后断交第7国',
+            type: '国内信息',
+            data: '2019-09-10 19:31:31',
+            administrator:'九五',
+           
+
+          },{
+            title: '不选了！纽约市长白思豪宣布退出2020美国大选',
+            type: '国内信息',
+            data: '2019-09-10 19:31:31',
+            administrator:'张三',
+            
+
+          }]
+
+
           
     );
 
@@ -197,41 +213,12 @@ export default {
     //   loginCodeStaus.text=params.text;
     //   loginCodeStaus.status=params.status;
     // }
-    // 获取列表
-     const add_list =()=>{
-
-      let reqData= {
-        
-        categoryId:"",
-        title: "",
-        pageNumber: page.pageNumber,
-        pageSize: page.pageSize
-
-      }
-      loading.value=true;
-
-      addInfoList(reqData).then(res=>{
-        console.log(res);
-         let resData =res.data.data;
-         tableData.item =resData.data;
-         total.value=resData.total
-         loading.value=false;
-      }).catch(err=>{
-         loading.value=false;
-      })
-    }
-
-
      const handleSizeChange = (val) =>{
         console.log(`每页 ${val} 条`);
-        page.pageSize =val;
-         add_list();
       };
 
       const handleCurrentChange = (val) =>{
         console.log(`当前页: ${val}`);
-        page.pageNumber=val
-         add_list();
       };
 
 
@@ -243,11 +230,6 @@ export default {
         infoAddStatus.value=val;
 
       };
-
-      // 子组件触发更新列表
-      const UpdataList = ()=>{
-        add_list();
-      }
 
       // 删除方法
       const detelList = () =>{
@@ -295,9 +277,6 @@ export default {
         // getCategory()
         // 全局获取分类列表的方法
         categoryGlobal();
-
-        //获取列表
-        add_list();
       
        
         
@@ -312,9 +291,6 @@ export default {
 
     //  暴露数据
      return {
-       loading,
-        total,
-        page,
         type_value,
         type_options,
         headerData,
@@ -328,9 +304,7 @@ export default {
         infoAddStatus,
         close,
         detelList,
-        detelAll,
-        add_list,
-         UpdataList
+        detelAll
 
 
          

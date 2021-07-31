@@ -23,8 +23,8 @@
 
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="danger" @click="add_info"  v-loading="loading">确 定</el-button>
-            
+            <el-button type="danger" @click="add_info">确 定</el-button>
+            <el-button type="danger" @click="add_list">确 定111</el-button>
           </div>
         
 
@@ -32,7 +32,7 @@
 </template>
 
   <script>
-  import {addInfo} from '@/api/info.js'
+  import {addInfo,addInfoList} from '@/api/info.js'
 export default {
   name:'InfoAdd',
  
@@ -54,7 +54,6 @@ export default {
         },
         formLabelWidth: '60px',
         fatherData:'',
-        loading:false
         
     }
   },
@@ -82,63 +81,41 @@ export default {
       console.log('iiii');
        this.fatherData=this.typeData
     },
-    //清空表单
-    clearForm (){
-      this.form.name = "";
-      this.form.region="";
-      this.form.content="";
-
-    },
-
     add_info(){
-     
-      
+      this.dialogFormVisible=false;
       let reqData= {
         
-      "category_id": this.form.region,
-      "content": this.form.content,
-      "create_date": "",
-      "image_url": "",
+      "category_id": "19",
+      "content": "hhhytt33yy",
+      "create_date": "2021-06-25 16:39:33",
+      "image_url": "http://qv18xxim7.hn-bkt.clouddn.com/1-7.jpg",
       "status": "1",
-      "title": this.form.name
+      "title": "js真的很不错lglglgl"
 
       }
-      
-      if(!this.form.region || !this.form.content || !this.form.name){
-        this.$message({
-          message: '请完整输入内容',
-          type: 'warning'
-        });
-
-        return false
-      }
-      this.loading = true;
-      
-
-
       addInfo(reqData).then(res=>{
         console.log(res);
-        //添加提示语
-        this.$message({
-          message: '恭喜你，这是一条成功消息',
-          type: 'success'
-        });
-        this.loading = false;
-        //清空表单
-         this.clearForm()
-         //触发方法  刷新列表
-         this.$emit('updateList');
-         let tt = this.dialogFormVisible = false
-         console.log(tt);
-         
-         
       }).catch(err=>{
         console.log("错误了");
         console.log(err);
       })
       
     },
-   
+    add_list(){
+
+      let reqData= {
+        
+        categoryId: 1,
+        title: "vue3",
+        pageNumber: 1,
+        pageSize: 10
+
+      }
+
+      addInfoList(reqData).then(res=>{
+        console.log(res);
+      })
+    }
 
     
   
