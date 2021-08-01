@@ -8,7 +8,7 @@
                <!-- 特别注意 <div class="group-content"> 下包含的标签 一定要写style="width: 100%;" 不然适应不了父元素-->
                 <label for="">类型:</label>
                 <div class="group-content">
-                     <el-select v-model="type_value" placeholder="请选择" style="width: 100%;">
+                     <el-select v-model="type_value" clearable placeholder="请选择" style="width: 100%;">
                           <el-option
                             v-for="item in type_options.list"
                             :key="item.id"
@@ -23,15 +23,20 @@
              <div class="label-wrap data">
                 <label for="">日期: &nbsp&nbsp&nbsp&nbsp</label>
                 <div class="group-content">
-                   <el-date-picker
-                      style="width: 100%;"
-                      v-model="headerData"
-                      type="daterange"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期">
+                    <el-date-picker
+                        style="width: 100%;"
+                        v-model="headerData"
+                        type="daterange"
+                        unlink-panels
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        format="yyyy 年 MM 月 dd 日"
+                         value-format="yyyy-MM-dd"
+                    >
                   </el-date-picker>
                 </div>
+
              </div>
           </el-col>
 
@@ -39,7 +44,7 @@
              <div class="label-wrap keyword">
                 <label for="">关键字: &nbsp&nbsp</label>
                 <div class="group-content">
-                   <el-select v-model="keyword_value" placeholder="请选择" style="width: 100%;">
+                   <el-select v-model="keyword_value" clearable placeholder="请选择" style="width: 100%;"  >
                           <el-option
                             v-for="item in keyword_options"
                             :key="item.value"
@@ -56,7 +61,7 @@
                 <el-input v-model="search_keyWork" placeholder="请输入内容" style="width: 100%;"></el-input>
             </el-col>
             <el-col :span="2">
-                <el-button type="danger" style="width: 100%;">搜索</el-button>
+                <el-button type="danger" style="width: 100%;" @click="search">搜索</el-button>
             </el-col>
             <el-col :span="2">&nbsp;</el-col>
             <el-col :span="2">
@@ -70,19 +75,19 @@
      </div>
      <div class="console-menu">
 
-            <el-table :data="tableData.item"  style="width: 100%" border   v-loading="loading">
+            <el-table :data="tableData.item"  style="width: 100%" border   v-loading="loading"  @selection-change="handleSelectionChange">
 
                 <el-table-column type="selection" width="40" align="center" > </el-table-column>
                 <el-table-column prop="title" label="标题" width="600" align="center" label-class-name='bold'> </el-table-column>
-                <el-table-column prop="categoryId" label="类别" width="80"   align="center" label-class-name='bold'> </el-table-column>
-                <el-table-column prop="createDate" label="日期" width="180"  align="center" label-class-name='bold'> </el-table-column>
+                <el-table-column prop="categoryId" label="类别" width="80"   align="center" label-class-name='bold' :formatter="toCategory"> </el-table-column>
+                <el-table-column prop="createDate" label="日期" width="180"  align="center" label-class-name='bold' :formatter="formatter"> </el-table-column>
                 <el-table-column prop="administrator" label="管理人"   align="center" label-class-name='bold' width="80"> </el-table-column>
                 
 
                  <el-table-column label="操作" align="center" label-class-name='bold'>
                     <template slot-scope="scope">
                       <el-button size="mini" type="success">编辑</el-button>
-                      <el-button size="mini" type="danger" @click="detelList">删除</el-button>
+                      <el-button size="mini" type="danger" @click="detelList(scope.row)">删除</el-button>
                     </template>
                </el-table-column>
         
@@ -123,8 +128,9 @@ import { reactive, ref, isRef, toRefs, onMounted, watch, onUnmounted } from '@vu
 import { global } from "@/utils/global_V3.0";
 
 import { getCategoryGlobal } from "@/utils/common.js";
+import { timestampToTime } from "@/utils/timer.js";
 
-import {addInfoList} from '@/api/info.js'
+import {addInfoList,delInfoList} from '@/api/info.js'
 
 
 import InfoAdd from './dialog/infoAdd.vue';
@@ -144,9 +150,10 @@ export default {
     //声明data数据
     const type_value = ref('');
     const headerData = ref('');
-    const keyword_value = ref(1);
+    const keyword_value = ref("id");
     const search_keyWork = ref('');
     let loading =ref(false);
+    let deteId =ref('');
     
 
     let total =ref(0);
@@ -182,11 +189,11 @@ export default {
     // 关键字数据
     const  keyword_options = reactive(
       [{
-          value: 1,
+          value: "id",
           label: 'ID'
         }, {
-          value: 2,
-          label: '类别'
+          value: "title",
+          label: '标题'
         }]
           
     );
@@ -197,17 +204,61 @@ export default {
     //   loginCodeStaus.text=params.text;
     //   loginCodeStaus.status=params.status;
     // }
+
+    // 搜索的方法
+    const search = ()=>{
+        // console.log(type_value.value);
+        // console.log(headerData.value);
+        // console.log(keyword_value.value);
+        // console.log(search_keyWork.value);
+        let oo =searchData();
+        console.log(oo);
+         add_list()
+
+    };
+    // 因为搜索要按数据来搜,有选择的就传进去  没选的就不传,但是pageNumber,pageSize 是必传, 所以要定义个方法来专门处理请求的数据,再返回出来
+    const searchData = ()=>{
+        let reqData = {
+          pageNumber: page.pageNumber,
+          pageSize: page.pageSize
+        };
+        if(type_value.value){reqData.categoryId = type_value.value}
+        if(headerData.value.length!=0){
+          reqData.start_time = headerData.value[0];
+          reqData.end_time = headerData.value[1];
+        }
+        if(search_keyWork.value){
+          reqData[keyword_value.value] =search_keyWork.value
+        }
+        return  reqData
+    };
+
     // 获取列表
      const add_list =()=>{
+      //  let uu =   {
+      //     categoryId: "4354",
+      //     categoryName: null,
+      //     content: "今日要闻万",
+      //     createDate: "1627688014",
+      //     end_time: null,
+      //     id: "202",
+      //     imgUrl: null,
+      //     start_time: null,
+      //     status: null,
+      //     title: "今日要闻,国家对每人发放生活补助金8万"
+      //   };
 
-      let reqData= {
+      // let reqData= {
         
-        categoryId:"",
-        title: "",
-        pageNumber: page.pageNumber,
-        pageSize: page.pageSize
+      //   categoryId:"",
+      //   title: "",
+      //   pageNumber: page.pageNumber,
+      //   pageSize: page.pageSize
+      // }
 
-      }
+       let reqData =searchData()
+
+
       loading.value=true;
 
       addInfoList(reqData).then(res=>{
@@ -250,46 +301,101 @@ export default {
       }
 
       // 删除方法
-      const detelList = () =>{
+      const detelList = (val) =>{
+        deteId.value =val.id 
         
-        console.log(111);
         // 全局提示方法  传参数进去,一般以对象的形式传 方便以后加功能
         root.$warning(
           {
             content:'删除单个吗',
             type:'warning',
             // 传方法
-            fn: handleSizeChange 
+            fn: DeteCategory
           }
         );
        
       };
       const detelAll = () =>{
         
-        console.log(22);
+       
         // 全局提示方法  可传 可不传
         // root.$warning();
 
         //全局提示方法  3.0 写法
-         confirm({
-                content: "确认删除当前信息，确认后将无法恢复！！啊啊啊啊",
-                tip: "哇擦勒",
+        //  confirm({
+        //         content: "确认删除当前信息，确认后将无法恢复！！啊啊啊啊",
+        //         tip: "哇擦勒",
+        //         fn: DeteCategory
                
                 
-            })
+        //     })
+        if(!deteId.length ||deteId.value.length == 0 ){
+          root.$message.error('请勾选要删的选项');
+          return false
+        }
+
+        root.$warning(
+          {
+            content:'删除所有选中的吗',
+            type:'warning',
+            // 传方法
+            fn: DeteCategory
+          }
+        );
 
 
         
        
       };
 
+      // 饿了么 多选的表格的方法
+      const handleSelectionChange = (val)=>{
+         
+          let  ttt = val.map(item=>item.categoryId);
+          let yy =ttt.join()
+         deteId.value =yy
+         
 
-         watch(()=>categoryGlobalData.reqData,(value)=>{
+      };
+
+      const DeteCategory = ()=>{
+              
+       
+            delInfoList({id:deteId}).then(res=>{
+            
+              deteId.value ='';
+               add_list()
+             
+            }).catch(err=>{
+              console.log(err);
+            })
+      }
+
+
+      watch(()=>categoryGlobalData.reqData,(value)=>{
            
-             type_options.list =value
+             type_options.list =value;
+             
          })
   
+    // 过滤日期的方法
+   const  formatter = (row, column,cellValue, index) => {
+       //时间搓转换的方法
+        return timestampToTime(row.createDate)
+   };
 
+
+    //过滤列表的方法  
+    const toCategory = (row)=>{
+      // 找出父级分类ID
+      let cateId =row.categoryId
+
+      // 和类型的数组做匹配,type_options.list中有相同的父级分类ID 就过滤出来成为单独的数组,再选择他对应的类型
+       let ss = type_options.list.filter(item=>item.id == cateId)
+       
+       
+       return ss[0].category_name
+    };
     //  生命周期
     onMounted(()=>{
         // getCategory()
@@ -312,6 +418,7 @@ export default {
 
     //  暴露数据
      return {
+       deteId,
        loading,
         total,
         page,
@@ -330,7 +437,13 @@ export default {
         detelList,
         detelAll,
         add_list,
-         UpdataList
+        UpdataList,
+        formatter,
+        toCategory,
+        DeteCategory,
+        handleSelectionChange,
+        search,
+        searchData
 
 
          

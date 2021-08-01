@@ -16,10 +16,7 @@ export default {
               console.log('不存在传进来的方法');
             }
 
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+        
         }).catch(() => {
           this.$message({
             type: 'info',

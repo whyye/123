@@ -129,7 +129,7 @@ export default {
          //触发方法  刷新列表
          this.$emit('updateList');
          let tt = this.dialogFormVisible = false
-         console.log(tt);
+        
          
          
       }).catch(err=>{
