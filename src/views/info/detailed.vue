@@ -9,12 +9,15 @@
                 <label for="">类型:</label>
                 <div class="group-content">
                      <el-select v-model="type_value" clearable placeholder="请选择" style="width: 100%;">
-                          <el-option
+                       <template v-if="type_options.list.length>0">
+                         <el-option
                             v-for="item in type_options.list"
                             :key="item.id"
                             :label="item.category_name"
                             :value="item.id">
                           </el-option>
+                       </template>
+                          
                      </el-select>
                 </div>
              </div>
@@ -86,7 +89,7 @@
 
                  <el-table-column label="操作" align="center" label-class-name='bold'>
                     <template slot-scope="scope">
-                      <el-button size="mini" type="success">编辑</el-button>
+                      <el-button size="mini" type="success" @click="editlList(scope.row.id)">编辑</el-button>
                       <el-button size="mini" type="danger" @click="detelList(scope.row)">删除</el-button>
                     </template>
                </el-table-column>
@@ -116,7 +119,8 @@
      <!-- 信息添加弹框 组件 -->
    
       <!-- <InfoAdd :flag.sync="infoAddStatus"  /> -->
-      <InfoAdd :flag="infoAddStatus" @ok="close" :typeData="type_options.list" @updateList="UpdataList" />
+      <InfoAdd :flag="infoAddStatus" @ok="close" :typeData="type_options.list" @updateList="UpdataList"  />
+      <InfoEdit :flag="infoEditStatus" @ok="close" :typeData="type_options.list" @updateList="UpdataList" :editId="editData" />
   </div>
 </template>
 
@@ -134,9 +138,10 @@ import {addInfoList,delInfoList} from '@/api/info.js'
 
 
 import InfoAdd from './dialog/infoAdd.vue';
+import InfoEdit from './dialog/infoEdit.vue';
 export default {
  name:"Detail",
-   components:{InfoAdd},
+   components:{InfoAdd,InfoEdit},
 
    setup( props, { refs, root }){
 
@@ -154,6 +159,7 @@ export default {
     const search_keyWork = ref('');
     let loading =ref(false);
     let deteId =ref('');
+    let editData =ref('');
     
 
     let total =ref(0);
@@ -166,6 +172,7 @@ export default {
 
     // 信息新增弹框状态
     let infoAddStatus = ref(false);
+    let infoEditStatus = ref(false);
 
     // 分页数据
     const currentPage4 = ref(1);
@@ -204,6 +211,14 @@ export default {
     //   loginCodeStaus.text=params.text;
     //   loginCodeStaus.status=params.status;
     // }
+    // 编辑信息列表 
+    const editlList = (val)=>{
+        
+        editData.value = val ;
+        infoEditStatus.value = true;
+        
+        
+    }
 
     // 搜索的方法
     const search = ()=>{
@@ -262,7 +277,7 @@ export default {
       loading.value=true;
 
       addInfoList(reqData).then(res=>{
-        console.log(res);
+        
          let resData =res.data.data;
          tableData.item =resData.data;
          total.value=resData.total
@@ -290,8 +305,9 @@ export default {
       const close = (val) =>{
         
         
-         console.log(`当前页: ${val}`);
+        
         infoAddStatus.value=val;
+         infoEditStatus.value=val;
 
       };
 
@@ -418,6 +434,8 @@ export default {
 
     //  暴露数据
      return {
+       infoEditStatus,
+       editData,
        deteId,
        loading,
         total,
@@ -443,7 +461,8 @@ export default {
         DeteCategory,
         handleSelectionChange,
         search,
-        searchData
+        searchData,
+        editlList
 
 
          

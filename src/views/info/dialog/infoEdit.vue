@@ -1,6 +1,6 @@
 
 <template>
-    <el-dialog title="新增" :visible.sync="dialogFormVisible" @closed="closed" width="576px" class="info"  @opened="opened" destroy-on-close>
+    <el-dialog title="编辑" :visible.sync="dialogFormVisible" @closed="closed" width="576px" class="info"  @opened="opened" destroy-on-close>
        
           <el-form :model="form" ref="form">
               <el-form-item label="类型:" :label-width="formLabelWidth">
@@ -25,7 +25,7 @@
 
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="danger" @click="add_info"  v-loading="loading">确 定</el-button>
+            <el-button type="danger" @click="edit_info"  v-loading="loading">确 定</el-button>
             
           </div>
         
@@ -34,7 +34,7 @@
 </template>
 
   <script>
-  import {addInfo} from '@/api/info.js'
+  import {addInfo,editInfoList,addInfoList} from '@/api/info.js'
 export default {
   name:'InfoAdd',
  
@@ -57,6 +57,9 @@ export default {
         formLabelWidth: '60px',
         fatherData:'',
         loading:false ,
+        eId:'',
+        resData:''
+        
        
         
         
@@ -72,25 +75,49 @@ export default {
       type:Array,
       default:()=>[]
     },
-    Editrr : {
-      type:Object,
-      default:function () {
-            return {}
-      }
+    editId : {
+      type:String,
+      default:''
     },
 
   },
   methods: {
+
+    //获取原来的信息列表
+    add_list(val){
+      let reqData = {
+        id:val,
+        pageNumber: 1,
+        pageSize: 1
+
+      }
+       addInfoList(reqData).then(res=>{
+        console.log(res.data.data.data[0]);
+        this.resData =res.data.data.data[0]
+        this.form.region =this.resData.categoryId
+        this.form.name =this.resData.title
+        this.form.content =this.resData.content
+       
+
+        
+      }).catch(err=>{
+         
+      })
+    },
     closed (){
         this.dialogFormVisible=false;
-        console.log('已关闭');
+        
         // this.$emit('update:flag',false)
         this.$emit('ok',false);
+        this.eId= ''
         
     },
     opened(){
      
-       this.fatherData=this.typeData
+       this.fatherData=this.typeData;
+        if(this.eId){
+            this.add_list(this.eId)
+        }
       
        
     },
@@ -102,21 +129,31 @@ export default {
 
     },
 
-    add_info(){
+    edit_info(){
      
-      
-      let reqData= {
-        
+      console.log(this.eId);
+      let req = {
+      "id" : this.eId,
       "category_id": this.form.region,
       "content": this.form.content,
-      "create_date": "",
-      "image_url": "",
+      "image_url": "../../../assets/admin.png",
+      
       "status": "1",
       "title": this.form.name
 
       }
+
+//       {
+//     "id": 20
+//     "category_id": "18"
+//     "content": "<p>Vue3.js真的很不错</p>"
+//     "create_date": "2021-06-25 16:39:38"
+//     "image_url": "http://qv18xxim7.hn-bkt.clouddn.com/1-7.jpg"
+//     "status": "1"
+//     "title": "Vue3.js真的很不错"
+// }
       
-      if(!this.form.region || !this.form.content || !this.form.name){
+      if(!this.form.region || !this.form.content || !this.form.name ||!this.eId){
         this.$message({
           message: '请完整输入内容',
           type: 'warning'
@@ -128,25 +165,26 @@ export default {
       
 
 
-      addInfo(reqData).then(res=>{
-        console.log(res);
+      editInfoList(req).then(res=>{
+        
         //添加提示语
         this.$message({
-          message: '恭喜你，这是一条成功消息',
+          message: '恭喜你，修改成功',
           type: 'success'
         });
         this.loading = false;
         //清空表单
-         this.clearForm()
+        
          //触发方法  刷新列表
          this.$emit('updateList');
-         let tt = this.dialogFormVisible = false
+        
         
          
          
       }).catch(err=>{
         console.log("错误了");
         console.log(err);
+        this.loading = false;
       })
       
     },
@@ -156,7 +194,7 @@ export default {
   
   },
   mounted() {
-    
+   
   },
   
   watch:{
@@ -165,6 +203,13 @@ export default {
        
         
         this.dialogFormVisible=newValue;
+      }
+    },
+    editId:{
+      handler(newValue,oldValue){
+       
+        
+        this.eId=newValue;
       }
     },
     
