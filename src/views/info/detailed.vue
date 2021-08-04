@@ -81,7 +81,7 @@
             <el-table :data="tableData.item"  style="width: 100%" border   v-loading="loading"  @selection-change="handleSelectionChange">
 
                 <el-table-column type="selection" width="40" align="center" > </el-table-column>
-                <el-table-column prop="title" label="标题" width="600" align="center" label-class-name='bold'> </el-table-column>
+                <el-table-column prop="title" label="标题" width="500" align="center" label-class-name='bold'> </el-table-column>
                 <el-table-column prop="categoryId" label="类别" width="80"   align="center" label-class-name='bold' :formatter="toCategory"> </el-table-column>
                 <el-table-column prop="createDate" label="日期" width="180"  align="center" label-class-name='bold' :formatter="formatter"> </el-table-column>
                 <el-table-column prop="administrator" label="管理人"   align="center" label-class-name='bold' width="80"> </el-table-column>
@@ -90,6 +90,7 @@
                  <el-table-column label="操作" align="center" label-class-name='bold'>
                     <template slot-scope="scope">
                       <el-button size="mini" type="success" @click="editlList(scope.row.id)">编辑</el-button>
+                      <el-button size="mini" type="success" @click="editlList(scope.row.id)">编辑详情</el-button>
                       <el-button size="mini" type="danger" @click="detelList(scope.row)">删除</el-button>
                     </template>
                </el-table-column>
