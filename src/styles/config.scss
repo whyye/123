@@ -1,0 +1,31 @@
+//控制台菜单的宽度
+$navMenu : 250px;
+$navMenMin:63px;
+
+// 主颜色
+$mainCcolor: #f56c6c;
+
+
+
+
+
+@mixin webkit($type, $value){
+  -webkit-#{$type}: $value;
+  -moz-#{$type}: $value;
+  -o-#{$type}: $value;
+  -ms-#{$type}: $value;
+  #{$type}: $value;
+}
+
+@mixin layout( $width,$align){
+  label {
+    float:left;
+    line-height: 40px;
+    width:  $width +px;
+    text-align: $align;
+  }
+  .group-content {
+    margin-left: $width +px;
+  }
+}
+
