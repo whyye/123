@@ -21,9 +21,15 @@ router.beforeEach((to,from,next)=>{
 
         removeToken();
         removeUser();
-        store.commit('login/SET_TOKEN','');
-        store.commit('login/SET_USERNAME','');
+        // store.commit('login/SET_TOKEN','');
+        // store.commit('login/SET_USERNAME','');
         // console.log(store.state.login);
+
+        // 循环一次性存两个 
+        store.commit('login/SET_LOGIN',{
+          token:'',
+          username:'',
+        })
       }
       next();
       // console.log('存在');

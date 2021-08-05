@@ -34,12 +34,19 @@ const  mutations = {
         
     } ,
 
-      SET_TOKEN (state,value){
-         state.token = value
-      },
-      SET_USERNAME (state,value){
-         state.username = value
-      },
+      // SET_TOKEN (state,value){
+      //    state.token = value
+      // },
+      // SET_USERNAME (state,value){
+      //    state.username = value
+      // },
+
+      // 循环的方式一次性存token和username
+      SET_LOGIN (state,params){
+          for (let key in params ){
+            state[key]=params[key]
+          }
+      }
 };
 
 const actions = {
@@ -48,8 +55,14 @@ const actions = {
         login(resquestData).then(res =>{
           let data =res.data.data;
           // 存到store里
-          commit('SET_TOKEN',data.token);
-          commit('SET_USERNAME',data.username);
+          // commit('SET_TOKEN',data.token);
+          // commit('SET_USERNAME',data.username);
+
+         // 循环一次性改变store里的值 ,SET_TOKEN,SET_USERNAME 变成一个SET_LOGIN方法
+          commit('SET_LOGIN',{
+            token:data.token,
+            username:data.username
+          })
 
           // 存到cookies
           setToken(data.token);

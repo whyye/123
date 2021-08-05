@@ -42,8 +42,15 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-           root.$store.commit('login/SET_TOKEN', '');
-           root.$store.commit('login/SET_USERNAME', '');
+          //  root.$store.commit('login/SET_TOKEN', '');
+          //  root.$store.commit('login/SET_USERNAME', '');
+
+                // 循环一次性改变store里的值 ,SET_TOKEN,SET_USERNAME 变成一个SET_LOGIN方法
+            root.$store.commit('login/SET_LOGIN',{
+              token:'',
+              username:'',
+            })
+
            removeToken();
            removeUser();
           // 页面跳转
