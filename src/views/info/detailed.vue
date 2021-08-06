@@ -303,6 +303,13 @@ export default {
 
     // 编辑信息详情 用js跳转
     const toEdit = (val) => {
+      
+      // 路由跳转 密文传输,刷新页面数据丢失,配合store和本地存储,使页面刷新数据不丢失,具体方法,1,跳转前先调用store的方法存一次,顺便本地存储也存,
+      //刷新数据store 里 id:"" || sessionStorage.getItem('infoId'), title:"" || sessionStorage.getItem('infoTitle'), 取数据的时候
+      //  let id =root.$route.params.id || root.$store.getters['infoDetail/infoId'];  let title =root.$route.params.title || root.$store.getters['infoDetail/infoTitle'];
+         
+          
+   
 
       // 前存到store 里面
       //  root.$store.commit('infoDetail/SET_ID',val.id)
