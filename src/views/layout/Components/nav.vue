@@ -15,12 +15,16 @@
      >
       <!-- 选换路由的地方 -->
       <template  v-for="(item,index) in routers">
-        <el-submenu :index="index + '' "  :key="index" v-if="!item.hidden"  class="hh">
+        <el-submenu :index="index + '' "  :key="index" v-if="!item.hidden" >
             <template slot="title">
              <svg-icon :iconClass="item.meta.icon" :className="item.meta.icon" />
               <span>{{item.meta.name}}</span>
             </template>
-          <el-menu-item :index="subItem.path" v-for="(subItem, subIndex) in item.children " :key="subIndex">{{subItem.meta.name}}</el-menu-item>
+          
+          <template v-for="(subItem, subIndex) in item.children ">
+            <el-menu-item  v-if="!subItem.hidden" :index="subItem.path"  :key="subIndex">  {{subItem.meta.name}}</el-menu-item>
+          </template>
+         
           
       </el-submenu>
       </template>
