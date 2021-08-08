@@ -7,7 +7,7 @@
                 <el-select v-model="form.region " placeholder="请选择类型">
                   <!-- 这里要判断存不存在,不然老报错 -->
                   <template v-if="fatherData">
-                     <el-option v-for="item in fatherData" :label="item.category_name"  :value="item.id"  ></el-option>
+                     <el-option v-for="item in fatherData" :label="item.category_name"  :value="item.id" :key="item.id" ></el-option>
                   </template>
                 </el-select>
               </el-form-item>

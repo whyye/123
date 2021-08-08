@@ -7,7 +7,7 @@
                 <el-select v-model="form.region " placeholder="请选择类型">
                   <!-- 这里要判断存不存在,不然老报错 -->
                   <template v-if="fatherData">
-                     <el-option v-for="item in fatherData" :label="item.category_name"  :value="item.id"  ></el-option>
+                     <el-option v-for="item in fatherData" :label="item.category_name"  :value="item.id"  :key="item.id"></el-option>
                   </template>
                 </el-select>
               </el-form-item>
@@ -57,7 +57,7 @@ export default {
         formLabelWidth: '60px',
         fatherData:'',
         loading:false ,
-        eId:'',
+        
         resData:''
         
        
@@ -84,9 +84,9 @@ export default {
   methods: {
 
     //获取原来的信息列表
-    add_list(val){
+    add_list(){
       let reqData = {
-        id:val,
+        id:this.editId,
         pageNumber: 1,
         pageSize: 1
 
@@ -109,15 +109,15 @@ export default {
         
         // this.$emit('update:flag',false)
         this.$emit('ok',false);
-        this.eId= ''
+        
         
     },
     opened(){
      
        this.fatherData=this.typeData;
-        if(this.eId){
-            this.add_list(this.eId)
-        }
+       
+      this.add_list()
+       
       
        
     },
@@ -131,10 +131,10 @@ export default {
 
     edit_info(){
      
-      console.log(this.eId);
+      
       let req = {
-      "id" : this.eId,
-      "category_id": this.form.region,
+      "id" : this.editId,
+      "categoryId": this.form.region,
       "content": this.form.content,
       "image_url": "../../../assets/admin.png",
       
@@ -153,7 +153,7 @@ export default {
 //     "title": "Vue3.js真的很不错"
 // }
       
-      if(!this.form.region || !this.form.content || !this.form.name ||!this.eId){
+      if(!this.form.region || !this.form.content || !this.form.name){
         this.$message({
           message: '请完整输入内容',
           type: 'warning'
@@ -177,6 +177,7 @@ export default {
         
          //触发方法  刷新列表
          this.$emit('updateList');
+          this.dialogFormVisible=false;
         
         
          
@@ -205,13 +206,7 @@ export default {
         this.dialogFormVisible=newValue;
       }
     },
-    editId:{
-      handler(newValue,oldValue){
-       
-        
-        this.eId=newValue;
-      }
-    },
+   
     
     
    
