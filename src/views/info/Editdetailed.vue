@@ -5,12 +5,7 @@
               <el-form-item label="信息分类:" :label-width="data.formLabelWidth">
                 <el-select v-model="form.categoryId " placeholder="请选择类型">
                   <!-- 这里要判断存不存在,不然老报错 -->
-                     
                <el-option v-for="item in data.category" :label="item.category_name"  :value="item.id"  :key="item.id"></el-option>
-                     
-                     
-                    
-                  
                 </el-select>
               </el-form-item>
 
@@ -58,10 +53,6 @@
                 <quillEditor v-model="form.content" ref="myQuillEditor" :options="data.editorOption" class="ql-editor"/>
 
               </el-form-item>
-
-             
-
-            
           </el-form>
 
           <div slot="footer" class="buttom-footer ">
@@ -135,9 +126,9 @@ export default {
          */
         const getQiniuToKen = () => {
             let requestData = {
-                "accesskey": "Avh-EZZAa4TxqPQZsEW42fXBUbTMFi-RKSZTRKJj",
-                "secretkey": "l9AXtnhCVkZexXNRcmHXzmecXiCUiLynwGboMeUw",
-                "buckety": "webjshtml"
+                "ak": "p3Q6Fkdkv7X1OKAA8YLr63FVsdVWozVi9eIt46Zg",
+                "sk": "r20wgmp9bAP9-UJ_mxeWG9iYjAwHW0hhuVffoSeA",
+                "buckety": "jpg1111"
             }
             QiniuToKen(requestData).then(response => {
                 data.uploadKey.token = response.data.data.token
@@ -147,9 +138,6 @@ export default {
             })
         }
 
-     
-
-
        /**
         * 图片上传的方法
         * 
@@ -158,7 +146,7 @@ export default {
         console.log(res);
         // 上传成功后  要显示地址, 就要拼上上传保存的地方(这个地址是七牛云的地址,A总的) 拼上上传图片的名称 res.key.
         // 最后保存要显示在后台上, 要读取接口把form.imgUrl 附上值,才能一直显示 ,不然刷新页面会看不到
-        form.imgUrl = `http://www-web-jshtml-cn-idva7mx.web-jshtml.cn/${res.key}`
+        form.imgUrl = `http://qxigdawhl.hn-bkt.clouddn.com/${res.key}`
       };
       const beforeAvatarUpload = (file)=> {
         const isJPG = file.type === 'image/jpeg';
@@ -173,7 +161,7 @@ export default {
         // 上传前文件名转码
         let suffix = file.name
         let key = encodeURI(`${suffix}`)
-        data.uploadKey=key;
+        data.uploadKey.key=key;
 
 
         return isJPG && isLt2M;
@@ -265,11 +253,6 @@ export default {
         getQiniuToKen()
           
         });
-   
-
-   
-
-     
 
     //  暴露数据
      return {
