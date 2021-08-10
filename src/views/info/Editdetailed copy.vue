@@ -27,10 +27,18 @@
 
 
                     -->
-                   <!-- 图片上传的组件 -->
-              <upLoadImage  :imgUrl.sync="form.imgUrl" :config="upLoadConfig"/>
+                    <el-upload
+                      class="avatar-uploader"
 
+                      action="http://up-z2.qiniup.com"  
+                      :data="data.uploadKey"  
 
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="form.imgUrl" :src="form.imgUrl" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
               </el-form-item>
 
               <el-form-item label="发布日期:" :label-width="data.formLabelWidth"  >
@@ -69,16 +77,14 @@ import 'quill/dist/quill.bubble.css';
  import {editInfoList,addInfoList} from '@/api/info.js'
  import { timestampToTime } from "@/utils/timer.js";
 
- 
-
- import upLoadImage from '../../components/upLoadImge/index.vue'
+ import { QiniuToKen } from "@/api/common";
 
 
 
 
 export default {
  name:"EditDetail",
-   components:{quillEditor,upLoadImage},
+   components:{quillEditor},
 
    setup( props, { refs, root }){
 
@@ -92,14 +98,7 @@ export default {
         // let id =root.$route.params.id || root.$store.getters['infoDetail/infoId'];
         // let title =root.$route.params.title || root.$store.getters['infoDetail/infoTitle'];
 
-      //  图片组件  上传的配置
-      const upLoadConfig = reactive({
-           "action":"http://up-z2.qiniup.com",
-           "ak": "p3Q6Fkdkv7X1OKAA8YLr63FVsdVWozVi9eIt46Zg",
-           "sk": "r20wgmp9bAP9-UJ_mxeWG9iYjAwHW0hhuVffoSeA",
-           "buckety": "jpg1111"
-
-      })
+       
 
         const data = reactive({
               id: root.$route.params.id || root.$store.getters['infoDetail/infoId'],
@@ -107,7 +106,10 @@ export default {
               editorOption: {},
               loading: false,
               formLabelWidth: '120px',
-             
+              uploadKey:{
+                token:'',
+                 key: ""
+              }
        })
 
         const form = reactive({
@@ -118,9 +120,52 @@ export default {
           imgUrl: ""
         })
 
-        
-       
-      
+         /**
+          *
+         * 获取七牛云token , 上传到七牛云网址需要
+         */
+        const getQiniuToKen = () => {
+            let requestData = {
+                "ak": "p3Q6Fkdkv7X1OKAA8YLr63FVsdVWozVi9eIt46Zg",
+                "sk": "r20wgmp9bAP9-UJ_mxeWG9iYjAwHW0hhuVffoSeA",
+                "buckety": "jpg1111"
+            }
+            QiniuToKen(requestData).then(response => {
+                data.uploadKey.token = response.data.data.token
+                console.log(data.uploadKey.token);
+
+                // 后面上传前 要做文件名转码,再图片上传前那个方法里设置转码
+            })
+        }
+
+       /**
+        * 图片上传的方法
+        * 
+        */
+      const  handleAvatarSuccess = (res, file)=>{
+        console.log(res);
+        // 上传成功后  要显示地址, 就要拼上上传保存的地方(这个地址是七牛云的地址,A总的) 拼上上传图片的名称 res.key.
+        // 最后保存要显示在后台上, 要读取接口把form.imgUrl 附上值,才能一直显示 ,不然刷新页面会看不到
+        form.imgUrl = `http://qxigdawhl.hn-bkt.clouddn.com/${res.key}`
+      };
+      const beforeAvatarUpload = (file)=> {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          root.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          root.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        // 上传前文件名转码
+        let suffix = file.name
+        let key = encodeURI(`${suffix}`)
+        data.uploadKey.key=key;
+
+
+        return isJPG && isLt2M;
+      }
     
 
      
@@ -205,7 +250,7 @@ export default {
         onMounted(() => {
         getInfoCategory();
         add_list();
-        
+        getQiniuToKen()
           
         });
 
@@ -214,11 +259,12 @@ export default {
        
        data,
        form,
-       upLoadConfig,
        
        add_list,
        submit,
-      
+       handleAvatarSuccess,
+       beforeAvatarUpload,
+       getQiniuToKen
 
 
          
