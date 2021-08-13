@@ -50,9 +50,20 @@
           <div class="label-wrap keyword">
             <label for="">关键字: &nbsp&nbsp</label>
             <div class="group-content">
-              <!-- 下拉组件 -->
-               <selectOption  :config="configOption"/>
-               
+              <el-select
+                v-model="keyword_value"
+                clearable
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in keyword_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </div>
           </div>
         </el-col>
@@ -230,10 +241,9 @@ import { addInfoList, delInfoList } from "@/api/info.js";
 
 import InfoAdd from "./dialog/infoAdd.vue";
 import InfoEdit from "./dialog/infoEdit.vue";
-import selectOption from '@c/SelectOption/index.vue'
 export default {
   name: "Detail",
-  components: { InfoAdd, InfoEdit ,selectOption},
+  components: { InfoAdd, InfoEdit },
 
   setup(props, { refs, root }) {
     // global
@@ -272,12 +282,17 @@ export default {
       { item: [] }
     );
 
-   
-
-    //  传入 selectOption 组件初始化内容
-   const configOption = reactive({
-      init:["id","title"]
-   })
+    // 关键字数据
+    const keyword_options = reactive([
+      {
+        value: "id",
+        label: "ID",
+      },
+      {
+        value: "title",
+        label: "标题",
+      },
+    ]);
 
     //方法声明
     // const  updataCodeStaus = (params)=>{
@@ -512,7 +527,6 @@ export default {
 
     //  暴露数据
     return {
-      configOption,
       infoEditStatus,
       editData,
       deteId,
@@ -523,7 +537,7 @@ export default {
       type_options,
       headerData,
       keyword_value,
-      
+      keyword_options,
       search_keyWork,
       tableData,
       currentPage4,
